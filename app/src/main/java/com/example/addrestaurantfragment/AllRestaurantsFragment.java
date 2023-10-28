@@ -25,9 +25,6 @@ import java.util.ArrayList;
  */
 public class AllRestaurantsFragment extends Fragment {
 
-    private FirebaseServices fbs;
-    private ArrayList<Restaurant> rests;
-
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -79,23 +76,6 @@ public class AllRestaurantsFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
-        fbs = FirebaseServices.getInstance();
-        rests = new ArrayList<>();
-        fbs.getFire().collection("restaurants").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-            @Override
-            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                for (DocumentSnapshot dataSnapshot: queryDocumentSnapshots.getDocuments()){
-                    Restaurant rest = dataSnapshot.toObject(Restaurant.class);
 
-                    rests.add(rest);
-                }
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(getActivity(), "No data available", Toast.LENGTH_SHORT).show();
-                Log.e("AllRestaurantsFragment", e.getMessage());
-            }
-        });
     }
 }
