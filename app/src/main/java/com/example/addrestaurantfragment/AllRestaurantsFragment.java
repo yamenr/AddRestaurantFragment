@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,6 +25,11 @@ import java.util.ArrayList;
  * create an instance of this fragment.
  */
 public class AllRestaurantsFragment extends Fragment {
+
+    private FirebaseServices fbs;
+    private ArrayList<Restaurant> rests;
+    private RecyclerView rvRests;
+    private RestaurantAdapter adapter;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -76,6 +82,28 @@ public class AllRestaurantsFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
+        fbs = FirebaseServices.getInstance();
+        rests = new ArrayList<>();
+        rvRests = getView().findViewById(R.id.rvRestaurantsRestFragment);
+        fbs.getFire().collection("restaurants").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
 
+                for (DocumentSnapshot dataSnapshot: queryDocumentSnapshots.getDocuments()){
+                    Restaurant rest = dataSnapshot.toObject(Restaurant.class);
+
+                    rests.add(rest);
+                }
+
+                adapter = new RestaurantAdapter(getContext(), rests);
+                rvRests.setAdapter(adapter);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(getActivity(), "No data available", Toast.LENGTH_SHORT).show();
+                Log.e("AllRestaurantsFragment", e.getMessage());
+            }
+        });
     }
 }
