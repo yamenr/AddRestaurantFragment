@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
@@ -85,6 +86,10 @@ public class AllRestaurantsFragment extends Fragment {
         fbs = FirebaseServices.getInstance();
         rests = new ArrayList<>();
         rvRests = getView().findViewById(R.id.rvRestaurantsRestFragment);
+        adapter = new RestaurantAdapter(getActivity(), rests);
+        rvRests.setAdapter(adapter);
+        rvRests.setHasFixedSize(true);
+        rvRests.setLayoutManager(new LinearLayoutManager(getActivity()));
         fbs.getFire().collection("restaurants").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
@@ -95,8 +100,7 @@ public class AllRestaurantsFragment extends Fragment {
                     rests.add(rest);
                 }
 
-                adapter = new RestaurantAdapter(getContext(), rests);
-                rvRests.setAdapter(adapter);
+                adapter.notifyDataSetChanged();
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
